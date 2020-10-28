@@ -14,6 +14,8 @@ namespace MovieAPI.Models
         public DbSet<Movie> Movies { get; set; }
         public DbSet<MovieCharacter> MovieCharacters { get; set; }
 
+        public MovieDbContext(DbContextOptions options) : base(options) { }
+        public MovieDbContext() : base() { }
 
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -23,7 +25,7 @@ namespace MovieAPI.Models
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<MovieCharacter>().HasKey(mc => new { mc.CharacterId, mc.MovieId });
+            modelBuilder.Entity<MovieCharacter>().HasKey(ca => new { ca.MovieId, ca.CharacterId, ca.ActorId });
         }
 
     }
