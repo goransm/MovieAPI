@@ -26,9 +26,9 @@ namespace MovieAPI.Controllers
 
         // GET: api/Franchise
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Franchise>>> GetFranchises()
+        public async Task<ActionResult<IEnumerable<FranchiseListDto>>> GetFranchises()
         {
-            return await _context.Franchises.ToListAsync();
+            return await _context.Franchises.Select(f => _mapper.Map<FranchiseListDto>(f)).ToListAsync();
         }
 
         // GET: api/Franchise/5
@@ -66,7 +66,6 @@ namespace MovieAPI.Controllers
         {
             var movieIds = await _context.Movies.Where(m => m.FranchiseId == id).Select(m => m.Id).ToArrayAsync();
 
-            /*      */
             var characterIds = await _context.MovieCharacters
                 .Where(mc => movieIds.Contains(mc.MovieId))
                 .Include(mcDto => mcDto.Actor)
@@ -86,13 +85,11 @@ namespace MovieAPI.Controllers
 
         }
 
-
-
         // PUT: api/Franchise/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutFranchise(int id, Franchise franchise)
+        public async Task<IActionResult> EditFranchise(int id, Franchise franchise)
         {
             if (id != franchise.Id)
             {
@@ -126,10 +123,11 @@ namespace MovieAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Franchise>> PostFranchise(Franchise franchise)
         {
+            // TODO: check for existing franchise with same name?
             _context.Franchises.Add(franchise);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetFranchise", new { id = franchise.Id }, franchise);
+            return CreatedAtAction(nameof(GetFranchise), new { id = franchise.Id }, franchise);
         }
 
         // DELETE: api/Franchise/5
@@ -145,7 +143,7 @@ namespace MovieAPI.Controllers
             _context.Franchises.Remove(franchise);
             await _context.SaveChangesAsync();
 
-            return franchise;
+            return Ok(franchise);
         }
 
         private bool FranchiseExists(int id)

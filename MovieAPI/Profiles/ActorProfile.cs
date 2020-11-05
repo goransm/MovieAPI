@@ -13,7 +13,7 @@ namespace MovieAPI.Profiles
         public ActorProfile()
         {
             CreateMap<Actor, ActorDto>().ReverseMap();
-            CreateMap<Actor, ActorListDto>().ForMember(alDto => alDto.Name, opt => opt.MapFrom(actor => actor.FullName())).ReverseMap();
+            CreateMap<Actor, ActorListDto>().ForMember(alDto => alDto.Name, opt => opt.MapFrom(actor => actor.FullName)).ReverseMap();
         }
     }
 }

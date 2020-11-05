@@ -53,13 +53,6 @@ namespace MovieAPI.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<CharacterActorListDto>>> GetCharacters(int id)
         {
-            /*
-            var charactersQuery = 
-            from movieCharacter in _context.MovieCharacters
-            where movieCharacter.MovieId == id
-            join character in _context.Characters on movieCharacter.CharacterId equals character.Id
-            join actor in _context.Actors on movieCharacter.ActorId equals actor.Id
-            */
             var characters = await _context.MovieCharacters
                 .Where(mc => mc.MovieId == id)
                 .Include(mcDto => mcDto.Actor)
@@ -83,7 +76,7 @@ namespace MovieAPI.Controllers
             _context.Movies.Add(mv);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetMovie", new { id = mv.Id }, mv);
+            return CreatedAtAction(nameof(GetMovie), new { id = mv.Id }, mv);
         }
 
         [HttpPut("{id}")]
@@ -124,6 +117,7 @@ namespace MovieAPI.Controllers
         public async Task<ActionResult<Movie>> DeleteMovie(int id)
         {
             var movie = await _context.Movies.FindAsync(id);
+
             if(movie == null)
             {
                 return NotFound();
@@ -132,8 +126,9 @@ namespace MovieAPI.Controllers
             _context.Movies.Remove(movie);
             await _context.SaveChangesAsync();
 
-            return movie;
+            return Ok(movie);
         }
+
 
         private bool MovieExists(int id)
         {

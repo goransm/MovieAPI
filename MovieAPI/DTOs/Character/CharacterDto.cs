@@ -12,7 +12,6 @@ namespace MovieAPI.DTOs
         public string Alias { get; set; }
         public string Gender { get; set; }
         public string Picture { get; set; }
-        //public ICollection<MovieListDto> Movies { get; set; }
 
     }
 }

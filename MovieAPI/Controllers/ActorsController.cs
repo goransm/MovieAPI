@@ -67,5 +67,80 @@ namespace MovieAPI.Controllers
             }
             return movies;
         }
+
+        [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<Actor>> GetActor(int id)
+        {
+            var actor = await _context.Actors.FindAsync(id);
+            if(actor == null)
+            {
+                return NotFound();
+            }
+
+            return actor;
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<Actor>> CreateActor(ActorDto actor)
+        {
+            _context.Actors.Add(_mapper.Map<Actor>(actor));
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction(nameof(GetActor), new { id = actor.Id }, actor);
+        }
+
+        [HttpPut("{id}")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public async Task<IActionResult> EditActor(int id, Actor actor)
+        {
+            if(id != actor.Id)
+            {
+                return BadRequest();
+            }
+
+            _context.Entry(actor).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!ActorExists(id))
+                {
+                    return NotFound();
+                } else
+                {
+                    throw;
+                }
+            }
+            return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<Actor>> DeleteActor(int id)
+        {
+            var actor = await _context.Actors.FindAsync(id);
+            if(actor == null)
+            {
+                return NotFound();
+            }
+            _context.Actors.Remove(actor);
+            await _context.SaveChangesAsync();
+
+            return Ok(actor);
+        }
+
+
+        private bool ActorExists(int id)
+        {
+            return _context.Actors.Any(a => a.Id == id);
+        }
     }
 }

@@ -21,10 +21,12 @@ namespace MovieAPI.Models
         [Url]
         public string Picture { get; set; }
         public ICollection<MovieCharacter> Roles { get; set; }
-        public string FullName()
-        {
-            var middleName = OtherNames != null ? $" {OtherNames} " : " ";
-            return $"{FirstName}{middleName}{LastName}";
+        public string FullName { get
+            {
+                var middleName = OtherNames != null ? $" {OtherNames} " : " ";
+                return $"{FirstName}{middleName}{LastName}";
+
+            }
         }
 
     }

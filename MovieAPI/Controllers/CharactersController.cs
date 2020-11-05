@@ -64,5 +64,49 @@ namespace MovieAPI.Controllers
         }
 
 
+        [HttpPost]
+        public async Task<ActionResult<Character>> CreateCharacter(CharacterDto character)
+        {
+            _context.Characters.Add(_mapper.Map<Character>(character));
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction(nameof(GetCharacter), new { id = character.Id }, character);
+        }
+
+        [HttpPut("{id}")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public async Task<IActionResult> EditCharacter(int id, Character character)
+        {
+            if(id != character.Id)
+            {
+                return BadRequest();
+            }
+
+            _context.Entry(character).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!CharacterExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            return NoContent();
+        }
+
+        private bool CharacterExists(int id)
+        {
+            return _context.Characters.Any(c => c.Id == id);
+        }
     }
 }

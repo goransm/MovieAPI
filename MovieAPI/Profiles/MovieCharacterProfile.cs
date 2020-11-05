@@ -13,6 +13,7 @@ namespace MovieAPI.Profiles
         public MovieCharacterProfile()
         {
             CreateMap<MovieCharacter, MovieCharacterDto>().ReverseMap();
+            CreateMap<MovieCharacter, MovieCharacterListDto>().ReverseMap();
             CreateMap<MovieCharacter, CharacterListDto>().ReverseMap();
             CreateMap<MovieCharacterDto, CharacterActorListDto>().ReverseMap();
         }
